@@ -36,8 +36,8 @@ endif()
 #-----------------------------
 # Build the module library
 #-----------------------------
-file(GLOB_RECURSE LIB_C_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.c")
-file(GLOB_RECURSE LIB_CPP_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
+file(GLOB LIB_C_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.c")
+file(GLOB LIB_CPP_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 set(LIB_SRC_FILES ${LIB_C_FILES} ${LIB_CPP_FILES})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})

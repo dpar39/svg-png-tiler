@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "base64.h"
-#include "lodepng/lodepng.h"
+#include "lodepng.h"
 
 #include <fstream>
 #include <rapidxml/rapidxml.hpp>
