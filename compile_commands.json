@@ -1,0 +1,22 @@
+[
+{
+  "directory": "C:/Users/dpar3/Dev/svg2raster/build_Debug_Emscripten",
+  "command": "C:\\Users\\dpar3\\Dev\\emsdk\\upstream\\emscripten\\em++.bat -I../ -g4 -std=gnu++17 -o CMakeFiles\\pngtiler.dir\\base64.cpp.o -c C:\\Users\\dpar3\\Dev\\svg2raster\\base64.cpp",
+  "file": "C:/Users/dpar3/Dev/svg2raster/base64.cpp"
+},
+{
+  "directory": "C:/Users/dpar3/Dev/svg2raster/build_Debug_Emscripten",
+  "command": "C:\\Users\\dpar3\\Dev\\emsdk\\upstream\\emscripten\\em++.bat -I../ -g4 -std=gnu++17 -o CMakeFiles\\pngtiler.dir\\lodepng.cpp.o -c C:\\Users\\dpar3\\Dev\\svg2raster\\lodepng.cpp",
+  "file": "C:/Users/dpar3/Dev/svg2raster/lodepng.cpp"
+},
+{
+  "directory": "C:/Users/dpar3/Dev/svg2raster/build_Debug_Emscripten",
+  "command": "C:\\Users\\dpar3\\Dev\\emsdk\\upstream\\emscripten\\em++.bat -I../ -g4 -std=gnu++17 -o CMakeFiles\\pngtiler.dir\\main.cpp.o -c C:\\Users\\dpar3\\Dev\\svg2raster\\main.cpp",
+  "file": "C:/Users/dpar3/Dev/svg2raster/main.cpp"
+},
+{
+  "directory": "C:/Users/dpar3/Dev/svg2raster/build_Debug_Emscripten",
+  "command": "C:\\Users\\dpar3\\Dev\\emsdk\\upstream\\emscripten\\em++.bat -I../ -g4 -std=gnu++17 -o CMakeFiles\\pngtiler.dir\\pngtiler.cpp.o -c C:\\Users\\dpar3\\Dev\\svg2raster\\pngtiler.cpp",
+  "file": "C:/Users/dpar3/Dev/svg2raster/pngtiler.cpp"
+}
+]

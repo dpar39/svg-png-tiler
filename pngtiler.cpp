@@ -73,7 +73,7 @@ private:
 };
 
 
-std::vector<unsigned char> convertSvgToPng(std::string & svgWithImageTiles)
+std::vector<unsigned char> convertSvgToPng(std::string svgWithImageTiles)
 {
     using namespace rapidxml;
     const auto getIntAttr = [](const xml_node<> * node, const char * attrName) {
