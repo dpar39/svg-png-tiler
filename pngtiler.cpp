@@ -189,3 +189,5 @@ std::vector<unsigned char> convertSvgToPng(std::string & svgWithImageTiles)
     return png;
 }
 
+
+

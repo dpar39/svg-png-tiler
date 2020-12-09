@@ -1,0 +1,22 @@
+buildType:
+  default: debug
+  choices:
+    debug:
+      short: Debug
+      long: Emit debug information
+      buildType: Debug
+    release:
+      short: Release
+      long: Optimize generated code
+      buildType: Release
+buildKit:
+  default: msvc
+  choices:
+    msvc:
+      short: VS2019
+      long: Build with VS2019 x64
+      buildKit: VS2019
+    wasm:
+      short: WASM
+      long: Build with Emscripten
+      buildKit: Emscripten

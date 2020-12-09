@@ -45,5 +45,11 @@
         "xstring": "cpp",
         "xtr1common": "cpp",
         "xutility": "cpp"
-    }
+    },
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+    "cmake.buildDirectory": "${workspaceFolder}/build_${buildType}_${buildKit}",
+    "cmake.installPrefix": "${workspaceFolder}/install_${buildType}_${buildKit}",
+    "cmake.generator": "Ninja",
+    
+    "cmake.copyCompileCommands": "${workspaceFolder}"
 }

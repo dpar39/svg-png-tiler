@@ -1,0 +1,15 @@
+[
+    {
+        "name": "Emscripten",
+        "toolchainFile": "C:/Users/dpar3/Dev/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake",
+        "compilers": {
+            "CC": "C:/Users/dpar3/Dev/emsdk/upstream/emscripten/emcc.bat",
+            "CXX": "C:/Users/dpar3/Dev/emsdk/upstream/emscripten/em++.bat"
+        }
+    },
+    {
+        "name": "VS2019",
+        "visualStudio": "c3f7297d",
+        "visualStudioArchitecture": "x64"
+    }
+]
