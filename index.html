@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>SVG to Png Example</title>
+    <meta name="description" content="" />
+    <meta name="author" content="Darien Pardinas Diaz" />
+
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"
+    ></script>
+
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+      crossorigin="anonymous"
+    ></script>
+
+    <link
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+      integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+      crossorigin="anonymous"
+    />
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/1.0.5/jquery.csv.js"
+      integrity="sha256-TuZTwjrWVuKrXuhPsScj4swOjhjxtjMQyWNwTTndPfw="
+      crossorigin="anonymous"
+    ></script>
+
+    <style>
+      body {
+        height: 100vh;
+      }
+      #svg {
+        overflow: scroll;
+        width: 95vw;
+        height: 85vh;
+      }
+      #two {
+        background-color: #444;
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .btn-group-xs > .btn,
+      .btn-xs {
+        padding: 0.25rem 0.4rem;
+        font-size: 0.875rem;
+        line-height: 0.5;
+        border-radius: 0.2rem;
+      }
+    </style>
+  </head>
+
+  <body class="bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">SVG to PNG converter</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto"></div>
+        <span class="navbar-text mr-1" id="pixel-position"></span>
+        <span class="navbar-text mr-4 px-2" id="pixel-color"></span>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row mt-2">
+        <div class="col-1">
+          <input
+            type="number"
+            min="1"
+            max="100000"
+            id="width"
+            class="form-control"
+            placeholder="Width"
+          />
+        </div>
+        <div class="col-1">
+          <input
+            type="number"
+            min="1"
+            max="100000"
+            id="height"
+            class="form-control"
+            placeholder="Height"
+          />
+        </div>
+        <div class="col-1">
+          <button class="btn btn-primary" onclick="generateGrid()">
+            Generate
+          </button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 mt-3">
+          <div id="svg"></div>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript" src="client.js"></script>
+    <script type="text/javascript">
+      function generateGrid() {
+        let width = parseInt(document.getElementById("width").value);
+        let height = parseInt(document.getElementById("height").value);
+        let svg = makeSvg(width, height, "#222");
+        let div = document.getElementById("svg");
+        div.innerHTML = "";
+        div.appendChild(svg);
+      }
+
+      let svg = makeSvg(2000, 2000, "#222");
+      let div = document.getElementById("svg");
+      div.innerHTML = "";
+      div.appendChild(svg);
+
+      let keyHandler = (event) => {
+        const ch = String.fromCharCode(event.keyCode);
+        if (ch === "O" && event.ctrlKey) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      };
+      window.addEventListener("keydown", keyHandler);
+    </script>
+  </body>
+</html>

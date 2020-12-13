@@ -50,6 +50,5 @@
     "cmake.buildDirectory": "${workspaceFolder}/build_${buildType}_${buildKit}",
     "cmake.installPrefix": "${workspaceFolder}/install_${buildType}_${buildKit}",
     "cmake.generator": "Ninja",
-    
     "cmake.copyCompileCommands": "${workspaceFolder}/compile_commands.json"
 }
