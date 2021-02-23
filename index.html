@@ -106,9 +106,14 @@
             placeholder="Height"
           />
         </div>
-        <div class="col-1">
+        <div class="col-2">
           <button class="btn btn-primary" onclick="generateGrid()">
             Generate
+          </button>
+        </div>
+        <div class="col-2">
+          <button class="btn btn-primary" onclick="saveAsPng()">
+            Export PNG
           </button>
         </div>
       </div>
@@ -123,27 +128,20 @@
     <script type="text/javascript" src="client.js"></script>
     <script type="text/javascript">
       function generateGrid() {
-        let width = parseInt(document.getElementById("width").value);
-        let height = parseInt(document.getElementById("height").value);
+        let width = parseInt(document.getElementById("width").value || 2000);
+        let height = parseInt(document.getElementById("height").value || 2000);
         let svg = makeSvg(width, height, "#222");
         let div = document.getElementById("svg");
         div.innerHTML = "";
         div.appendChild(svg);
       }
 
-      let svg = makeSvg(2000, 2000, "#222");
-      let div = document.getElementById("svg");
-      div.innerHTML = "";
-      div.appendChild(svg);
+      function saveAsPng() {
+        let div = document.getElementById("svg");
+        exportSvgPng(svgElementToString(div.firstChild));
+      }
 
-      let keyHandler = (event) => {
-        const ch = String.fromCharCode(event.keyCode);
-        if (ch === "O" && event.ctrlKey) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-      };
-      window.addEventListener("keydown", keyHandler);
+      generateGrid();
     </script>
   </body>
 </html>

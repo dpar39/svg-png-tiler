@@ -44,13 +44,28 @@ function addRect(svg, x, y, w, h, fill) {
   return rect;
 }
 
+function addImage(svg, src, x, y, width, height) {
+  const img = createElmt("image");
+  img.setAttribute("width", width.toString());
+  img.setAttribute("height", height.toString());
+  img.setAttribute("x", x.toString());
+  img.setAttribute("y", y.toString());
+  img.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", src);
+  svg.appendChild(img);
+  return img;
+}
+
+function svgElementToString(svgElement) {
+  return new XMLSerializer().serializeToString(svgElement);
+}
+
 function makeSvg(width, height, backgroundColor) {
   const svg = initSvg(width, height);
 
   if (backgroundColor) {
     const r = addRect(svg, 0, 0, width, height, backgroundColor);
-    r.setAttribute('stroke', '#b4b')
-    r.setAttribute('fill', 'darkgreen')
+    r.setAttribute("stroke", "#b4b");
+    r.setAttribute("fill", "darkgreen");
   }
 
   const gridColor = "darkgray";
@@ -65,153 +80,137 @@ function makeSvg(width, height, backgroundColor) {
 
   for (let x = offset; x < width; x += grid)
     for (let y = offset; y < height; y += grid) {
-      if (y < grid || x > width-60) {
+      if (y < grid || x > width - 60) {
         continue;
       }
-      const t = addText(svg, x + 4, y - 5, `${x-offset}, ${y-offset}`);
-      t.setAttribute('stroke', 'plum')
+      const t = addText(svg, x + 4, y - 5, `${x - offset}, ${y - offset}`);
+      t.setAttribute("stroke", "orangered");
     }
   return svg;
 }
 
-async function exportSVGPng(svg) {
-  function addImage(svg, src, x, y, width, height) {
-    const img = createElmt("image");
-    img.setAttribute("width", width.toString());
-    img.setAttribute("height", height.toString());
-    img.setAttribute("x", x.toString());
-    img.setAttribute("y", y.toString());
-    img.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", src);
-    svg.appendChild(img);
-  }
+function saveContent(filename, fileContent) {
+  const a = document.createElement("a");
+  a.style.display = "none";
+  document.body.appendChild(a);
+  const blob = new Blob([fileContent], {
+    type: "text/xml+svg;charset=utf-8",
+  });
+  const objectURL = URL.createObjectURL(blob);
+  a.href = objectURL;
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  document.body.removeChild(a);
+}
 
-  function saveContent(filename, fileContent) {
-    const a = document.createElement("a");
-    a.style.display = "none";
-    document.body.appendChild(a);
-    const blob = new Blob([fileContent], {
-      type: "text/xml+svg;charset=utf-8",
-    });
-    const objectURL = URL.createObjectURL(blob);
-    a.href = objectURL;
-    a.href = URL.createObjectURL(blob);
-    a.download = filename;
-    a.click();
-    document.body.removeChild(a);
-  }
-
-  function blobToDataUrl(blob, mime) {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const GENERIC_MIME = "data:application/octet-stream";
-        if (mime && reader.result.startsWith(GENERIC_MIME)) {
-          const len = GENERIC_MIME.length;
-          resolve(`data:${mime}` + reader.result.substr(len));
-        } else {
-          resolve(reader.result);
-        }
-      };
-      reader.readAsDataURL(blob);
-    });
-  }
-
-  async function urlToDataUrl(url) {
-    let res = await fetch(url);
-    const contentType = res.headers.get("Content-Type");
-    let blob = await res.blob();
-    return await blobToDataUrl(blob, contentType);
-  }
-
-  async function resolveXLinksHRef(svg) {
-    let reg = /xlink:href="(https?:([A-z0-9~:,/?#\[\]@\!\$&'\(\)\*\+\s;%\.=]+))"/g;
-    let out = svg;
-    const resolvedUrls = new Map();
-    while ((result = reg.exec(svg)) !== null) {
-      let url = result[1];
-      let dataUrl = null;
-      if (resolvedUrls.has(url)) {
-        dataUrl = resolvedUrls.get(url);
+function blobToDataUrl(blob, mime) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const GENERIC_MIME = "data:application/octet-stream";
+      if (mime && reader.result.startsWith(GENERIC_MIME)) {
+        const len = GENERIC_MIME.length;
+        resolve(`data:${mime}` + reader.result.substr(len));
       } else {
-        dataUrl = await urlToDataUrl(url);
-        resolvedUrls.set(url, dataUrl);
+        resolve(reader.result);
       }
-      out = out.replace(url, dataUrl);
+    };
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function urlToDataUrl(url) {
+  let res = await fetch(url);
+  const contentType = res.headers.get("Content-Type");
+  let blob = await res.blob();
+  return await blobToDataUrl(blob, contentType);
+}
+
+async function resolveXLinksHRef(svg) {
+  let reg = /xlink:href="(https?:([A-z0-9~:,/?#\[\]@\!\$&'\(\)\*\+\s;%\.=]+))"/g;
+  let out = svg;
+  const resolvedUrls = new Map();
+  while ((result = reg.exec(svg)) !== null) {
+    let url = result[1];
+    let dataUrl = null;
+    if (resolvedUrls.has(url)) {
+      dataUrl = resolvedUrls.get(url);
+    } else {
+      dataUrl = await urlToDataUrl(url);
+      resolvedUrls.set(url, dataUrl);
     }
-    return out;
+    out = out.replace(url, dataUrl);
   }
+  return out;
+}
 
-  function createBlobUrl(svgElmt) {
-    const xmlSerializer = new XMLSerializer();
-    const svgString = xmlSerializer.serializeToString(svgElmt);
-    const svgBlob = new Blob([svgString], {
-      type: "image/svg+xml;charset=utf-8",
-    });
-    return URL.createObjectURL(svgBlob);
-  }
+function createBlobUrl(svgElmt) {
+  const xmlSerializer = new XMLSerializer();
+  const svgString = xmlSerializer.serializeToString(svgElmt);
+  const svgBlob = new Blob([svgString], {
+    type: "image/svg+xml;charset=utf-8",
+  });
+  return URL.createObjectURL(svgBlob);
+}
 
-  function loadSvgOnImage(img, svgElmt) {
-    return new Promise((resolve, reject) => {
-      img.onload = () => resolve();
-      img.onerror = () => reject();
-      img.src = createBlobUrl(svgElmt);
-    });
-  }
+function loadSvgOnImage(img, svgElmt) {
+  return new Promise((resolve, reject) => {
+    img.onload = () => resolve();
+    img.onerror = () => reject();
+    img.src = createBlobUrl(svgElmt);
+  });
+}
 
-  async function createSvgWithPngTiles(svgElmt, xa, ya, xSize, ySize) {
-    // Make tiles so that rows don't use more than the area of an 8K image
-    const Dim16K = Math.pow(2, 14);
-    const Area8kImage = 7680 * 4320;
-    const tileSizeX = Math.min(Dim16K, xSize); // 16K max
-    const tileSizeY = Math.min(Dim16K, Math.floor(Area8kImage / xSize), ySize); // 16K max
+async function createSvgWithPngTiles(svgElmt, xa, ya, xSize, ySize) {
+  // Make tiles so that rows don't use more than the area of an 8K image
+  const Dim16K = Math.pow(2, 14);
+  const Area8kImage = 7680 * 4320;
+  const tileSizeX = Math.min(Dim16K, xSize); // 16K max
+  const tileSizeY = Math.min(Dim16K, Math.floor(Area8kImage / xSize), ySize); // 16K max
 
-    const finalSvg = initSvg(xSize, ySize);
+  const finalSvg = initSvg(xSize, ySize);
 
-    for (let j = 0; j < ySize / tileSizeY; ++j) {
-      var y = ya + j * tileSizeY;
-      var tileY = Math.min(tileSizeY, ySize - j * tileSizeY);
-      var tileYStr = tileY.toString();
+  for (let j = 0; j < ySize / tileSizeY; ++j) {
+    let y = ya + j * tileSizeY;
+    let tileY = Math.min(tileSizeY, ySize - j * tileSizeY);
+    let tileYStr = tileY.toString();
 
-      for (let i = 0; i < xSize / tileSizeX; ++i) {
-        var x = xa + i * tileSizeX;
-        var tileX = Math.min(tileSizeX, xSize - i * tileSizeX);
-        var tileXStr = tileX.toString();
+    for (let i = 0; i < xSize / tileSizeX; ++i) {
+      let x = xa + i * tileSizeX;
+      let tileX = Math.min(tileSizeX, xSize - i * tileSizeX);
+      let tileXStr = tileX.toString();
 
-        svgElmt.setAttribute("width", tileXStr);
-        svgElmt.setAttribute("height", tileYStr);
-        svgElmt.setAttribute(
-          "viewBox",
-          x.toString() + " " + y.toString() + " " + tileXStr + " " + tileYStr
-        );
+      svgElmt.setAttribute("width", tileXStr);
+      svgElmt.setAttribute("height", tileYStr);
+      svgElmt.setAttribute("viewBox", `${x} ${y} ${tileXStr} ${tileYStr}`);
 
-        var img = new Image();
-        img.width = tileXStr + "px";
-        img.height = tileYStr + "px";
+      let img = new Image();
+      img.width = tileXStr + "px";
+      img.height = tileYStr + "px";
 
-        await loadSvgOnImage(img, svgElmt);
+      await loadSvgOnImage(img, svgElmt);
 
-        var canvas = document.createElement("canvas");
-        canvas.width = tileX;
-        canvas.height = tileY;
-        var ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
-        addImage(
-          finalSvg,
-          canvas.toDataURL(),
-          i * tileSizeX,
-          j * tileSizeY,
-          tileX,
-          tileY
-        );
-        URL.revokeObjectURL(img.src);
-      }
+      let canvas = document.createElement("canvas");
+      canvas.width = tileX;
+      canvas.height = tileY;
+      let ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      addImage(
+        finalSvg,
+        canvas.toDataURL(),
+        i * tileSizeX,
+        j * tileSizeY,
+        tileX,
+        tileY
+      );
+      URL.revokeObjectURL(img.src);
     }
-    saveContent(
-      "finalSvg.svg",
-      new XMLSerializer().serializeToString(finalSvg)
-    );
   }
+  saveContent("finalSvg.svg", new XMLSerializer().serializeToString(finalSvg));
+}
 
+async function exportSvgPng(svg) {
   svg = await resolveXLinksHRef(svg);
   const svgDocument = new DOMParser().parseFromString(svg, "image/svg+xml");
   const svgElmt = svgDocument.firstChild;
@@ -220,7 +219,9 @@ async function exportSVGPng(svg) {
     "style"
   );
   //style.textContent = await getEmbeddedFonts(svg);
-  svgElmt.insertBefore(style, svgElmt.firstChild);
+  // svgElmt.insertBefore(style, svgElmt);
 
-  createSvgWithPngTiles(svgElmt, 0, 0, vw, vh);
+  const vw = parseInt(svgElmt.getAttribute("width"));
+  const vh = parseInt(svgElmt.getAttribute("height"));
+  await createSvgWithPngTiles(svgElmt, 0, 0, vw, vh);
 }
