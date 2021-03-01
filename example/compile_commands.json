@@ -1,7 +1,0 @@
-[
-{
-  "directory": "/app/build_wasm_release",
-  "command": "/emsdk/upstream/emscripten/em++ -I../  --pre-js /app/src/pre.js --post-js /app/src/post.js --bind -std=c++17 -s ALLOW_MEMORY_GROWTH=1 -s TOTAL_MEMORY=33554432 -s ASYNCIFY=1 -s 'ASYNCIFY_IMPORTS=[\"renderTile\"]' -Os -flto -O3 -DNDEBUG -std=gnu++17 -o CMakeFiles/svg2png.dir/Unity/unity_0_cxx.cxx.o -c /app/build_wasm_release/CMakeFiles/svg2png.dir/Unity/unity_0_cxx.cxx",
-  "file": "/app/build_wasm_release/CMakeFiles/svg2png.dir/Unity/unity_0_cxx.cxx"
-}
-]
