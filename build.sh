@@ -34,9 +34,7 @@ cd $BUILD_DIR && ninja && cd ..
 if [ $BUILD_PLATFORM == "wasm" ]; then
     cp $BUILD_DIR/*.wasm* .
     cp $BUILD_DIR/*.js .
-    cp $BUILD_DIR/*.js.all .
     cp $BUILD_DIR/*.wasm* example/
     cp $BUILD_DIR/*.js example/
-    cp $BUILD_DIR/*.js.all example/
 fi
 

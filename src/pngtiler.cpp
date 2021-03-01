@@ -1,21 +1,13 @@
-#include <memory>
-#include <sstream>
+#include <cmath>
+#include <iostream>
 #include <string>
 #include <vector>
 
-#include "base64.h"
 #include "lodepng.h"
 
-#include <cmath>
-#include <fstream>
-#include <iostream>
-
 #include <emscripten.h>
-
 #include <rapidxml/rapidxml.hpp>
 #include <rapidxml/rapidxml_print.hpp>
-
-using namespace std;
 
 int getIntAttr(const rapidxml::xml_node<> * node, const char * attrName)
 {
@@ -35,6 +27,8 @@ EM_JS(void, renderTile, (const char * svgStr, int w, int h, unsigned char * pixD
         canvas.height = h;
         let ctx = canvas.getContext("2d");
         var img = new Image();
+        img.width = "" + w + "px";
+        img.height = "" + h + "px";
         img.onload = () => {
             ctx.drawImage(img, 0, 0);
             URL.revokeObjectURL(img.src);
@@ -59,29 +53,39 @@ void renderSvgTile(int x,
                    rapidxml::xml_document<> & doc,
                    std::vector<unsigned char> & tileData)
 {
+    using namespace rapidxml;
+    const auto setAttr = [&](const char * attrName, const std::string & value) {
+        auto * svg = doc.first_node("svg");
+        auto * attr = svg->first_attribute(attrName);
+        if (!attr)
+        {
+            attr = doc.allocate_attribute(attrName, value.c_str());
+            svg->append_attribute(attr);
+        }
+        else
+        {
+            attr->value(value.c_str());
+        }
+    };
 
     using namespace std;
     const auto viewBox = to_string(x) + " " + to_string(y) + " " + to_string(tileSizeX) + " " + to_string(tileSizeY);
     std::cout << "Setting viewbox to: " << viewBox << std::endl;
-    auto * svg = doc.first_node("svg");
-    auto * viewBoxAttr = svg->first_attribute("viewBox");
-    if (!viewBoxAttr)
-    {
-        viewBoxAttr = doc.allocate_attribute("viewBox", viewBox.c_str());
-        svg->append_attribute(viewBoxAttr);
-    }
-    else
-    {
-        viewBoxAttr->value(viewBox.c_str());
-    }
-    // The rendering part
+    const auto wStr = to_string(tileSizeX);
+    const auto hStr = to_string(tileSizeY);
+    setAttr("viewBox", viewBox);
+    setAttr("width", wStr);
+    setAttr("height", hStr);
+    // Render svg as as a raster tile
     std::string s;
     print(std::back_inserter(s), doc, 0);
+    cout << s.substr(0, 100) << endl;
     renderTile(s.c_str(), tileSizeX, tileSizeY, &tileData[0]);
 }
 
 void svg2png(std::string svgString, emscripten::val cb)
 {
+    std::vector<std::string> store;
     using namespace rapidxml;
     auto doc = xml_document<>();
     auto svgContent = svgString;

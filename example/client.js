@@ -63,7 +63,7 @@ function makeSvg(width, height, backgroundColor) {
   const svg = initSvg(width, height);
 
   if (backgroundColor) {
-    const r = addRect(svg, 0, 0, width, height, backgroundColor);
+    const r = addRect(svg, 1, 1, width - 3, height - 3, backgroundColor);
     r.setAttribute("stroke", "yellow");
     r.setAttribute("stroke-width", "3px");
     r.setAttribute("fill", "#222222");
@@ -113,6 +113,27 @@ function saveContent(filename, fileContent) {
   a.download = filename;
   a.click();
   document.body.removeChild(a);
+}
+
+function downloadURL(data, fileName) {
+  var a;
+  a = document.createElement("a");
+  a.href = data;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.style = "display: none";
+  a.click();
+  a.remove();
+}
+
+function downloadBlob(data, fileName, mimeType) {
+  var blob, url;
+  blob = new Blob([data], {
+    type: mimeType,
+  });
+  url = window.URL.createObjectURL(blob);
+  downloadURL(url, fileName);
+  return window.URL.revokeObjectURL(url);
 }
 
 function blobToDataUrl(blob, mime) {
@@ -221,14 +242,11 @@ async function createSvgWithPngTiles(svgElmt, xa, ya, xSize, ySize) {
   saveContent("finalSvg.svg", new XMLSerializer().serializeToString(finalSvg));
 }
 
-async function exportSvgPng(svg) {
+async function exportSvgPngTiles(svg) {
   svg = await resolveXLinksHRef(svg);
   const svgDocument = new DOMParser().parseFromString(svg, "image/svg+xml");
   const svgElmt = svgDocument.firstChild;
-  let style = svgDocument.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "style"
-  );
+  let style = svgDocument.createElementNS("http://www.w3.org/2000/svg", "style");
   //style.textContent = await getEmbeddedFonts(svg);
   // svgElmt.insertBefore(style, svgElmt);
 

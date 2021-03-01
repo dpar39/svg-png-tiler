@@ -38,14 +38,8 @@
       #svg {
         overflow: scroll;
         width: 100%;
-        height: calc(100vh - 135px);
+        height: calc(100vh - 155px);
       }
-      #two {
-        background-color: #444;
-        display: flex;
-        flex-wrap: wrap;
-      }
-
       .btn-group-xs > .btn,
       .btn-xs {
         padding: 0.25rem 0.4rem;
@@ -58,7 +52,7 @@
 
   <body class="bg-dark">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <a class="navbar-brand" href="#">SVG to PNG converter</a>
+      <a class="navbar-brand" href="#">Live Demo: SVG to PNG converter</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -79,36 +73,57 @@
     </nav>
 
     <div class="container-fluid">
+      <div class="row">
+        <div class="col">
+          <h6 class="text-light">
+            Demonstrate how to generate a PNG out of a very large SVG directly
+            in the browser, defeating size limitations in HTML5 &lt;img&gt; and
+            &lt;canvas&gt; elements.
+          </h6>
+        </div>
+      </div>
       <div class="row mt-2">
-        <div class="col-1">
+        <div class="col text-light">
+          <span>W </span>
           <input
             type="number"
             min="1"
             max="100000"
             id="width"
             class="form-control"
+            style="width: 130px; display: inline-block"
             placeholder="Width"
-            value="20000"
+            value="1500"
           />
-        </div>
-        <div class="col-1">
+          <span>x H</span>
           <input
             type="number"
             min="1"
             max="100000"
             id="height"
             class="form-control"
+            style="width: 130px; display: inline-block"
             placeholder="Height"
             value="1500"
           />
-        </div>
-        <div class="col-2">
-          <button class="btn btn-primary" onclick="generateGrid()">
+          <button class="btn btn-primary mb-1 ml-2" onclick="generateGrid()">
             Generate
           </button>
+          <button
+            class="btn btn-primary mb-1 ml-2"
+            onclick="generateGrid(20000, 1500)"
+          >
+            20000 x 1500
+          </button>
+          <button
+            class="btn btn-primary mb-1 ml-2"
+            onclick="generateGrid(1500, 20000)"
+          >
+            1500 x 20000
+          </button>
         </div>
-        <div class="col-2">
-          <button class="btn btn-primary" onclick="saveAsPng()">
+        <div class="col">
+          <button class="btn btn-primary" onclick="exportToPng()">
             Export PNG
           </button>
         </div>
@@ -124,46 +139,29 @@
     <script type="text/javascript" src="client.js"></script>
     <script type="text/javascript" src="svg2png.js"></script>
     <script type="text/javascript">
-      function generateGrid() {
-        let width = parseInt(document.getElementById("width").value || 20000);
-        let height = parseInt(document.getElementById("height").value || 1500);
+      function generateGrid(width, height) {
+        const wEl = $('#width');
+        const hEl = $('#height');
+        width = width || parseInt(wEl.val() || 1500);
+        height = height || parseInt(hEl.val() || 1500);
+        wEl.val(width);
+        hEl.val(height);
         let svg = makeSvg(width, height, "#222");
         let div = document.getElementById("svg");
         div.innerHTML = "";
         div.appendChild(svg);
         return svg;
       }
-      function downloadURL(data, fileName) {
-        var a;
-        a = document.createElement("a");
-        a.href = data;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.style = "display: none";
-        a.click();
-        a.remove();
-      }
-
-      function downloadBlob(data, fileName, mimeType) {
-        var blob, url;
-        blob = new Blob([data], {
-          type: mimeType,
-        });
-        url = window.URL.createObjectURL(blob);
-        downloadURL(url, fileName);
-        return window.URL.revokeObjectURL(url);
-      }
 
       Module.onRuntimeInitialized = async (_) => {
         generateGrid();
       };
 
-      function saveAsPng() {
+      function exportToPng() {
         let div = document.getElementById("svg");
         const svgString = svgElementToString(div.firstChild);
-        console.log(svgString.substr(0, 100))
         Module.svg2png(svgString, (png) => {
-          downloadBlob(png, "a.png", "image/png");
+          downloadBlob(png, "output.png", "image/png");
         });
       }
     </script>
