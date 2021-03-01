@@ -116,8 +116,7 @@ function saveContent(filename, fileContent) {
 }
 
 function downloadURL(data, fileName) {
-  var a;
-  a = document.createElement("a");
+  const a = document.createElement("a");
   a.href = data;
   a.download = fileName;
   document.body.appendChild(a);
