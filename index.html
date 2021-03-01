@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>SVG to Png Example</title>
+    <meta name="description" content="" />
+    <meta name="author" content="Darien Pardinas Diaz" />
+
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"
+    ></script>
+
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+      crossorigin="anonymous"
+    ></script>
+
+    <link
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+      integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+      crossorigin="anonymous"
+    />
+
+    <style>
+      body {
+        height: 100vh;
+      }
+      #svg {
+        overflow: scroll;
+        width: 100%;
+        height: calc(100vh - 155px);
+      }
+      .btn-group-xs > .btn,
+      .btn-xs {
+        padding: 0.25rem 0.4rem;
+        font-size: 0.875rem;
+        line-height: 0.5;
+        border-radius: 0.2rem;
+      }
+    </style>
+  </head>
+
+  <body class="bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">Live Demo: SVG to PNG converter</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto"></div>
+        <span class="navbar-text mr-1" id="pixel-position"></span>
+        <span class="navbar-text mr-4 px-2" id="pixel-color"></span>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col">
+          <h6 class="text-light">
+            Demonstrate how to generate a PNG out of a very large SVG directly
+            in the browser, defeating size limitations in HTML5 &lt;img&gt; and
+            &lt;canvas&gt; elements.
+          </h6>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col text-light">
+          <span>W </span>
+          <input
+            type="number"
+            min="1"
+            max="100000"
+            id="width"
+            class="form-control"
+            style="width: 130px; display: inline-block"
+            placeholder="Width"
+            value="1500"
+          />
+          <span>x H</span>
+          <input
+            type="number"
+            min="1"
+            max="100000"
+            id="height"
+            class="form-control"
+            style="width: 130px; display: inline-block"
+            placeholder="Height"
+            value="1500"
+          />
+          <button class="btn btn-primary mb-1 ml-2" onclick="generateGrid()">
+            Generate
+          </button>
+          <button
+            class="btn btn-primary mb-1 ml-2"
+            onclick="generateGrid(20000, 1500)"
+          >
+            20000 x 1500
+          </button>
+          <button
+            class="btn btn-primary mb-1 ml-2"
+            onclick="generateGrid(1500, 20000)"
+          >
+            1500 x 20000
+          </button>
+        </div>
+        <div class="col">
+          <button class="btn btn-primary" onclick="exportToPng()">
+            Export PNG
+          </button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 mt-3">
+          <div id="svg"></div>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript" src="client.js"></script>
+    <script type="text/javascript" src="svg-png-tiler.js"></script>
+    <script type="text/javascript">
+      function generateGrid(width, height) {
+        const wEl = $('#width');
+        const hEl = $('#height');
+        width = width || parseInt(wEl.val() || 1500);
+        height = height || parseInt(hEl.val() || 1500);
+        wEl.val(width);
+        hEl.val(height);
+        let svg = makeSvg(width, height, "#222");
+        let div = document.getElementById("svg");
+        div.innerHTML = "";
+        div.appendChild(svg);
+        return svg;
+      }
+
+      Module.onRuntimeInitialized = async (_) => {
+        generateGrid();
+      };
+
+      function exportToPng() {
+        let div = document.getElementById("svg");
+        const svgString = svgElementToString(div.firstChild);
+        Module.svg2png(svgString, (png) => {
+          downloadBlob(png, "output.png", "image/png");
+        });
+      }
+    </script>
+  </body>
+</html>
