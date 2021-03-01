@@ -31,20 +31,14 @@
       crossorigin="anonymous"
     />
 
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/1.0.5/jquery.csv.js"
-      integrity="sha256-TuZTwjrWVuKrXuhPsScj4swOjhjxtjMQyWNwTTndPfw="
-      crossorigin="anonymous"
-    ></script>
-
     <style>
       body {
         height: 100vh;
       }
       #svg {
         overflow: scroll;
-        width: 95vw;
-        height: 85vh;
+        width: 100%;
+        height: calc(100vh - 135px);
       }
       #two {
         background-color: #444;
@@ -94,6 +88,7 @@
             id="width"
             class="form-control"
             placeholder="Width"
+            value="20000"
           />
         </div>
         <div class="col-1">
@@ -104,6 +99,7 @@
             id="height"
             class="form-control"
             placeholder="Height"
+            value="1500"
           />
         </div>
         <div class="col-2">
@@ -129,20 +125,15 @@
     <script type="text/javascript" src="svg2png.js"></script>
     <script type="text/javascript">
       function generateGrid() {
-        let width = parseInt(document.getElementById("width").value || 2000);
-        let height = parseInt(document.getElementById("height").value || 2000);
+        let width = parseInt(document.getElementById("width").value || 20000);
+        let height = parseInt(document.getElementById("height").value || 1500);
         let svg = makeSvg(width, height, "#222");
         let div = document.getElementById("svg");
         div.innerHTML = "";
         div.appendChild(svg);
         return svg;
       }
-
-      function saveAsPng() {
-        let div = document.getElementById("svg");
-        exportSvgPng(svgElementToString(div.firstChild));
-      }
-      const downloadURL = function (data, fileName) {
+      function downloadURL(data, fileName) {
         var a;
         a = document.createElement("a");
         a.href = data;
@@ -151,29 +142,30 @@
         a.style = "display: none";
         a.click();
         a.remove();
-      };
+      }
 
-      const downloadBlob = function (data, fileName, mimeType) {
+      function downloadBlob(data, fileName, mimeType) {
         var blob, url;
         blob = new Blob([data], {
           type: mimeType,
         });
         url = window.URL.createObjectURL(blob);
         downloadURL(url, fileName);
-        setTimeout(function () {
-          return window.URL.revokeObjectURL(url);
-        }, 1000);
-      };
+        return window.URL.revokeObjectURL(url);
+      }
 
       Module.onRuntimeInitialized = async (_) => {
-        const svg = generateGrid();
-        var s = new XMLSerializer();
-        var str = s.serializeToString(svg);
-        Module.svg2png(str, (png) => {
-          downloadBlob(png, 'a.png', 'image/png');
-        });
-        console.log("Invoked svg2png");
+        generateGrid();
       };
+
+      function saveAsPng() {
+        let div = document.getElementById("svg");
+        const svgString = svgElementToString(div.firstChild);
+        console.log(svgString.substr(0, 100))
+        Module.svg2png(svgString, (png) => {
+          downloadBlob(png, "a.png", "image/png");
+        });
+      }
     </script>
   </body>
 </html>

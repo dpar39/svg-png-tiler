@@ -6,13 +6,6 @@ var clpPromise = new Promise(function (resolve) {
     else
       Module['wasmBinary'] = Buffer.from(wasmBlobStr, 'base64');
   }
-  Module["preInit"] = [
-    function () {
-      FS.mkdir("/out");
-      FS.mount(MEMFS, { root: "." }, "/out");
-    },
-  ];
-
   Module["onRuntimeInitialized"] = function () {
     var m = this;
     this["svg2png"] = (function () {

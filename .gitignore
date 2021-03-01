@@ -6,7 +6,8 @@ node_modules
 
 svg2png.js
 svg2png.wasm
-svg2png.js.map
+svg2png.wasm.map
 svg2png.all.js
+compile_commands.json
 
 example/svg2png*

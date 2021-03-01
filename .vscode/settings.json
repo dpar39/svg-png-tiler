@@ -98,5 +98,6 @@
         "variant": "cpp",
         "*.log": "cpp",
         "csignal": "cpp"
-    }
+    },
+    "liveServer.settings.port": 5501
 }

@@ -64,18 +64,29 @@ function makeSvg(width, height, backgroundColor) {
 
   if (backgroundColor) {
     const r = addRect(svg, 0, 0, width, height, backgroundColor);
-    r.setAttribute("stroke", "#b4b");
-    r.setAttribute("fill", "darkgreen");
+    r.setAttribute("stroke", "yellow");
+    r.setAttribute("stroke-width", "3px");
+    r.setAttribute("fill", "#222222");
   }
 
   const gridColor = "darkgray";
   const offset = 10;
   const grid = 200;
-  for (let x = offset; x < width; x += grid) {
+  for (let x = offset; ; x += grid) {
     addLine(svg, x, offset, x, height - offset, gridColor);
+    if (x > width - offset) {
+      x = width - offset;
+      addLine(svg, x, offset, x, height - offset, gridColor);
+      break;
+    }
   }
-  for (let y = offset; y < height; y += grid) {
+  for (let y = offset; ; y += grid) {
     addLine(svg, offset, y, width - offset, y, gridColor);
+    if (y > height - offset) {
+      y = height - offset;
+      addLine(svg, offset, y, width - offset, y, gridColor);
+      break;
+    }
   }
 
   for (let x = offset; x < width; x += grid)

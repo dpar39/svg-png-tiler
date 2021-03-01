@@ -7,14 +7,12 @@
 using namespace emscripten;
 
 EMSCRIPTEN_BINDINGS(my_module) {
-    function("convertSvgToPng", &convertSvgToPng);
     function("svg2png", &svg2png);
 }
-
 #else
 #include <iostream>
 int main(int argc, char **argv)
 {
-    std::cout << "First CMAKE with VSCode" << std::endl;
+    std::cout << "This program is intended to target WebAssembly only." << std::endl;
 }
 #endif
