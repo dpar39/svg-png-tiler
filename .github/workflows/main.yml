@@ -1,14 +1,13 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Builds and publish CLP solver
-
+name: Builds and publish svg-png-tiler
 # Controls when the action will run. 
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   build:
@@ -35,7 +34,7 @@ jobs:
           CLEAN: true
   
       - name: Publish to NPM
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/master'
         uses: mikeal/merge-release@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
