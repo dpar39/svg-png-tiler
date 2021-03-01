@@ -8,6 +8,7 @@ using namespace emscripten;
 
 EMSCRIPTEN_BINDINGS(my_module) {
     function("convertSvgToPng", &convertSvgToPng);
+    function("svg2png", &svg2png);
 }
 
 #else

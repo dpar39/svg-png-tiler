@@ -1,2 +1,12 @@
 build_*
 .cache
+.ccache
+.trash
+node_modules
+
+svg2png.js
+svg2png.wasm
+svg2png.js.map
+svg2png.all.js
+
+example/svg2png*

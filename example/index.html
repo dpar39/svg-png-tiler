@@ -126,6 +126,7 @@
     </div>
 
     <script type="text/javascript" src="client.js"></script>
+    <script type="text/javascript" src="svg2png.js"></script>
     <script type="text/javascript">
       function generateGrid() {
         let width = parseInt(document.getElementById("width").value || 2000);
@@ -134,14 +135,45 @@
         let div = document.getElementById("svg");
         div.innerHTML = "";
         div.appendChild(svg);
+        return svg;
       }
 
       function saveAsPng() {
         let div = document.getElementById("svg");
         exportSvgPng(svgElementToString(div.firstChild));
       }
+      const downloadURL = function (data, fileName) {
+        var a;
+        a = document.createElement("a");
+        a.href = data;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.style = "display: none";
+        a.click();
+        a.remove();
+      };
 
-      generateGrid();
+      const downloadBlob = function (data, fileName, mimeType) {
+        var blob, url;
+        blob = new Blob([data], {
+          type: mimeType,
+        });
+        url = window.URL.createObjectURL(blob);
+        downloadURL(url, fileName);
+        setTimeout(function () {
+          return window.URL.revokeObjectURL(url);
+        }, 1000);
+      };
+
+      Module.onRuntimeInitialized = async (_) => {
+        const svg = generateGrid();
+        var s = new XMLSerializer();
+        var str = s.serializeToString(svg);
+        Module.svg2png(str, (png) => {
+          downloadBlob(png, 'a.png', 'image/png');
+        });
+        console.log("Invoked svg2png");
+      };
     </script>
   </body>
 </html>

@@ -1,0 +1,37 @@
+{
+  "name": "svg2png",
+  "version": "0.0.16",
+  "description": "Generates PNG from SVG larger than what HTML canvas supports",
+  "author": "Darien Pardinas",
+  "license": "EPL",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dpar39/svg2png.git"
+  },
+  "keywords": [
+    "SVG",
+    "PNG",
+    "rasterization",
+    "canvas"
+  ],
+  "devDependencies": {
+    "@types/jest": "^25.2.1",
+    "jest": "^26.0.1"
+  },
+  "files": [
+    "svg2png.*"
+  ],
+  "types": "svg2png.d.ts",
+  "scripts": {
+    "build-docker": "docker build . -t clp-wasm-builder",
+    "build-wasm": "docker run -u $(id -u):$(id -g) -v $PWD:/app clp-wasm-builder ./build.sh release wasm",
+    "build-bundle": "node bundle-with-wasm.js",
+    "build": "npm run build-docker && npm run build-wasm && node bundle-with-wasm.js",
+    "start": "jest --watchAll",
+    "test": "jest"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "typescript": ">= 3.8.3"
+  }
+}
