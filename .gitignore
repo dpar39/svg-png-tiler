@@ -4,10 +4,11 @@ build_*
 .trash
 node_modules
 
-svg2png.js
-svg2png.wasm
-svg2png.wasm.map
-svg2png.all.js
+svg-png-tiler.js
+svg-png-tiler.wasm
+svg-png-tiler.wasm.map
+svg-png-tiler.all.js
+
 compile_commands.json
 
-example/svg2png*
+example/svg-png-tiler*

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-set(MODULE_NAME svg2png)
+set(MODULE_NAME svg-png-tiler)
 project(${MODULE_NAME})
 
 string(TOLOWER ${CMAKE_BUILD_TYPE} BUILD_CONFIG_LOWER)

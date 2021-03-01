@@ -1,27 +1,26 @@
 {
-  "name": "svg2png",
-  "version": "0.0.16",
-  "description": "Generates PNG from SVG larger than what HTML canvas supports",
+  "name": "svg-png-tiler",
+  "version": "1.0.0",
+  "description": "Generates PNG output from SVG larger than what HTML5 canvas supports",
   "author": "Darien Pardinas",
-  "license": "EPL",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dpar39/svg2png.git"
+    "url": "https://github.com/dpar39/svg-png-tiler.git"
   },
   "keywords": [
     "SVG",
     "PNG",
-    "rasterization",
-    "canvas"
+    "rasterization"
   ],
   "devDependencies": {
     "@types/jest": "^25.2.1",
     "jest": "^26.0.1"
   },
   "files": [
-    "svg2png.*"
+    "svg-png-tiler.*"
   ],
-  "types": "svg2png.d.ts",
+  "types": "svg-png-tiler.d.ts",
   "scripts": {
     "build-docker": "docker build . -t clp-wasm-builder",
     "build-wasm": "docker run -u $(id -u):$(id -g) -v $PWD:/app clp-wasm-builder ./build.sh release wasm",

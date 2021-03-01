@@ -1,4 +1,4 @@
-const moduleName = 'svg2png';
+const moduleName = 'svg-png-tiler';
 const fs = require('fs');
 const contents = fs.readFileSync(`${moduleName}.wasm`, { encoding: 'base64' });
 let js = fs.readFileSync(`${moduleName}.js`, 'utf8')

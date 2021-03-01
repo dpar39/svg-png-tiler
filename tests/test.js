@@ -1,13 +1,13 @@
 const fs = require('fs');
 
-describe("svg2png test suite", () => {
+describe("svg-png-tiler test suite", () => {
 
   beforeAll(async () => {
-    svg2png = await require("../svg2png.all");
+    svg2png = await require("../svg-png-tiler.all");
   });
 
   test("converts large svg to png", () => {
-    
+      
   });
 });
 
