@@ -47,6 +47,11 @@
         line-height: 0.5;
         border-radius: 0.2rem;
       }
+      input[type="number"] {
+        width: 90px;
+        display: inline-block;
+        text-align: right;
+      }
     </style>
   </head>
 
@@ -76,9 +81,9 @@
       <div class="row">
         <div class="col">
           <h6 class="text-light">
-            Demonstrate how to generate a PNG out of a very large SVG directly
-            in the browser, overcoming pixel dimension limits in HTML5 &lt;img&gt; and
-            &lt;canvas&gt; elements.
+            Demonstrate how to generate a PNG image out of a very large SVG
+            directly in the browser, overcoming pixel dimension limits in HTML5
+            &lt;img&gt; and &lt;canvas&gt; elements.
           </h6>
         </div>
       </div>
@@ -91,7 +96,6 @@
             max="100000"
             id="width"
             class="form-control"
-            style="width: 130px; display: inline-block"
             placeholder="Width"
             value="1500"
           />
@@ -102,30 +106,44 @@
             max="100000"
             id="height"
             class="form-control"
-            style="width: 130px; display: inline-block"
             placeholder="Height"
             value="1500"
           />
           <button class="btn btn-primary mb-1 ml-2" onclick="generateGrid()">
-            Generate
+            Generate SVG
           </button>
           <button
-            class="btn btn-primary mb-1 ml-2"
+            class="btn btn-secondary btn-sm mb-1 ml-2"
             onclick="generateGrid(20000, 1500)"
           >
             20000 x 1500
           </button>
           <button
-            class="btn btn-primary mb-1 ml-2"
+            class="btn btn-secondary btn-sm mb-1 ml-2"
             onclick="generateGrid(1500, 20000)"
           >
             1500 x 20000
           </button>
         </div>
-        <div class="col">
+        <div class="col-2">
           <button class="btn btn-primary" onclick="exportToPng()">
             Export PNG
           </button>
+        </div>
+        <div class="col-3">
+          <div class="progress my-1" style="height: 30px">
+            <div
+              class="progress-bar position-relative bg-success"
+              role="progressbar"
+              aria-valuenow="0"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            ></div>
+            <h6
+              id="progressPct"
+              class="mt-1 text-center text-dark position-absolute w-100"
+            ></h6>
+          </div>
         </div>
       </div>
 
@@ -140,8 +158,8 @@
     <script type="text/javascript" src="svg-png-tiler.js"></script>
     <script type="text/javascript">
       function generateGrid(width, height) {
-        const wEl = $('#width');
-        const hEl = $('#height');
+        const wEl = $("#width");
+        const hEl = $("#height");
         width = width || parseInt(wEl.val() || 1500);
         height = height || parseInt(hEl.val() || 1500);
         wEl.val(width);
@@ -157,10 +175,24 @@
         generateGrid();
       };
 
+      function setProgress(progressPct) {
+        $(".progress-bar")
+          .css("width", progressPct + "%")
+          .attr("aria-valuenow", progressPct);
+        $("#progressPct").text(progressPct.toFixed(0) + " % ");
+      }
+
       function exportToPng() {
+        const t = new Date();
         let div = document.getElementById("svg");
         const svgString = svgElementToString(div.firstChild);
-        Module.svg2png(svgString, (png) => {
+        const options = {
+          onProgress: (progRatio) => setProgress(progRatio),
+          maxTilePixels: 1920 * 1080 * 4,
+        };
+        setProgress(0);
+        Module.svg2png(svgString, options, (png) => {
+          console.log(`Finished conversion to PNG in ${(new Date() - t)/1000} seconds`)
           downloadBlob(png, "output.png", "image/png");
         });
       }
