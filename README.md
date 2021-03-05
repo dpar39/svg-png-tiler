@@ -17,7 +17,11 @@ npm install svg-png-tiler
 ```javascript
 Module.onRuntimeInitialized = () => {
   const svgString = `<svg width="10000" height="80000" ... > ... </svg>`;
-  Module.svg2png(svgString, (png) => {
+  const opts = {
+    onProgress: (percent) => console.log(`Encoding progress ${percent} %.`),
+    maxTilePixels: 1920*1080 // print tiles in the area of a FullHD image
+  };
+  Module.svg2png(svgString, opts, (png) => {
     // png is a byte array representing the PNG encoded image to export/save
   });
 };
@@ -25,6 +29,5 @@ Module.onRuntimeInitialized = () => {
 
 ### TODOs:
 
-- Add progress indicator to the demo
-- Add optional explicit size to the output (dpi control)
+- Add optional explicit size to the output (DPI control)
 - Resolve and inline resources like images and fonts embedded in the SVG

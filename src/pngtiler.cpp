@@ -70,7 +70,6 @@ void renderSvgTile(int x,
 
     using namespace std;
     const auto viewBox = to_string(x) + " " + to_string(y) + " " + to_string(tileSizeX) + " " + to_string(tileSizeY);
-    std::cout << "Setting viewbox to: " << viewBox << std::endl;
     const auto wStr = to_string(tileSizeX);
     const auto hStr = to_string(tileSizeY);
     setAttr("viewBox", viewBox);
@@ -79,11 +78,10 @@ void renderSvgTile(int x,
     // Render svg as as a raster tile
     std::string s;
     print(std::back_inserter(s), doc, 0);
-    cout << s.substr(0, 100) << endl;
     renderTile(s.c_str(), tileSizeX, tileSizeY, &tileData[0]);
 }
 
-void svg2png(std::string svgString, emscripten::val cb)
+void svg2png(std::string svgString, emscripten::val options, emscripten::val cb)
 {
     std::vector<std::string> store;
     using namespace rapidxml;
@@ -93,6 +91,9 @@ void svg2png(std::string svgString, emscripten::val cb)
     auto * svg = doc.first_node("svg");
     if (!svg)
         cb();
+
+    constexpr const auto OPT_MAX_TILE_PIXES = "maxTilePixels";
+    constexpr const auto OPT_PROGRESS_CB = "onProgress";
 
     const auto colorType = LCT_RGBA;
     const auto bytesPerPixel = 4;
@@ -104,10 +105,15 @@ void svg2png(std::string svgString, emscripten::val cb)
     const auto height = getIntAttr(svg, "height");
 
     const auto Dim16K = 1 << 14;
-    const auto Area8kImage = 7680 * 4320;
+    const auto Area8kImage = options.hasOwnProperty(OPT_MAX_TILE_PIXES) ? options[OPT_MAX_TILE_PIXES].as<int>()
+                                                                       : 7680 * 4320;
+
     const auto tileSizeX = std::min(Dim16K, width); // 16K max
     const auto tileSizeY = std::min(Dim16K, std::min((int)std::floor(Area8kImage / width), height)); // 16K max
 
+    const auto numExpectedTiles = std::ceil((double)width / tileSizeX) * std::ceil((double)height / tileSizeY);
+
+    int numProcessedTiles = 0;
     std::vector<unsigned char> scanLines;
     std::vector<unsigned char> tileData;
     const lodepng::ScanLineLoader loader = [&](unsigned y) {
@@ -128,6 +134,12 @@ void svg2png(std::string svgString, emscripten::val cb)
                 auto * const dst = &scanLines[0] + (row * width + x) * bytesPerPixel;
                 memcpy(dst, src, tileScanBytes);
                 src += tileScanBytes;
+            }
+
+            if (options.hasOwnProperty(OPT_PROGRESS_CB))
+            {
+                const auto progressPct = 100.0 * (++numProcessedTiles) / numExpectedTiles;
+                options[OPT_PROGRESS_CB](val(progressPct));
             }
         }
         return std::make_pair(&scanLines[0], static_cast<unsigned>(sizeY));

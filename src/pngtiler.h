@@ -6,4 +6,4 @@
 
 //std::vector<unsigned char> convertSvgToPng(std::string svgWithImageTiles);
 
-void svg2png(std::string svgString, emscripten::val cb);
+void svg2png(std::string svgString, emscripten::val options, emscripten::val cb);
