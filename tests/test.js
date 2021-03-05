@@ -7,7 +7,7 @@ describe("svg-png-tiler test suite", () => {
   });
 
   test("converts large svg to png", () => {
-      
+      console.log('Implement me');
   });
 });
 
